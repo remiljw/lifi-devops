@@ -14,6 +14,11 @@ Find it
 
 # Challenge
 
+How to:
+- fork the repository
+- work on the challenges
+- share your repository link with the recruitment team
+
 Here are the challenges:
 - Install and run the app
 - Dockerize it (create dockerfile for each API)
@@ -25,3 +30,8 @@ Here are the challenges:
 Rules:
 - Use security / container / k8s / cloud best practices
 - Change in the source code is possible
+
+Evaluation criterias:
+- best practices
+- code organization
+- clarity & readability
