@@ -48,6 +48,7 @@ jobs:
 
             - name: Build and push Docker Bird image
               if:  steps.changes.outputs.bird == 'true'
+              id: bird
               uses: docker/build-push-action@v6
               with:
                 platforms: linux/amd64,linux/arm64
@@ -60,8 +61,9 @@ jobs:
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
 
-            - name: Build and push Docker Bird image
+            - name: Build and push Docker Bird API image
               if:  steps.changes.outputs.birdImage == 'true'
+              id: bird-api
               uses: docker/build-push-action@v6
               with:
                 platforms: linux/amd64,linux/arm64
