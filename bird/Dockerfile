@@ -21,6 +21,8 @@ FROM alpine
 WORKDIR /app
 COPY --from=BUILDER /app/ ./
 
+ENV BIRD_IMAGE_URL=localhost
+ENV BIRD_IMAGE_PORT=4200
 # Expose the port the app runs on
 EXPOSE 4201
 
