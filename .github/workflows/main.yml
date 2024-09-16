@@ -18,8 +18,8 @@ on:
 
 
 env:
-  BIRD_IMAGE_NAME: 'getbird'
-  BIRD_API_IMAGE_NAME: 'getbirdimage'
+  BIRD_IMAGE_NAME: 'remiljw/getbird'
+  BIRD_API_IMAGE_NAME: 'remiljw/getbirdimage'
 
 jobs:
     build-image:
