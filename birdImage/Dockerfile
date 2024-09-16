@@ -20,4 +20,4 @@ RUN go build -o getBirdImage .
 EXPOSE 4200
 
 # Run the application
-CMD ["./getBirdImage"] 
+CMD ["./getBirdImage"]

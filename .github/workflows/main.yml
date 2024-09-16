@@ -3,7 +3,7 @@ name: HTTP Service
 on:
     push:
         branches:
-            - '*'
+            - 'main'
         paths:
           - 'bird/**'
           - 'birdImage/**'
@@ -18,8 +18,8 @@ on:
 
 
 env:
-  BIRD_IMAGE_NAME: 'getBird'
-  BIRD_API_IMAGE_NAME: 'getBirdImage'
+  BIRD_IMAGE_NAME: 'getbird'
+  BIRD_API_IMAGE_NAME: 'getbirdimage'
 
 jobs:
     build-image:
