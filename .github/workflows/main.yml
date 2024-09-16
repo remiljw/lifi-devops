@@ -51,7 +51,7 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                 platforms: linux/amd64,linux/arm64
-                context: web
+                context: bird
                 file: bird/Dockerfile
                 push: true
                 tags: | 
@@ -65,7 +65,7 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                 platforms: linux/amd64,linux/arm64
-                context: web
+                context: birdImage
                 file: birdImage/Dockerfile
                 push: true
                 tags: | 
