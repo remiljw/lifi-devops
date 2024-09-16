@@ -52,7 +52,7 @@ jobs:
               with:
                 platforms: linux/amd64,linux/arm64
                 context: web
-                file: web/Dockerfile
+                file: bird/Dockerfile
                 push: true
                 tags: | 
                     ${{ env.BIRD_IMAGE_NAME }}:${{ github.sha }}
@@ -66,7 +66,7 @@ jobs:
               with:
                 platforms: linux/amd64,linux/arm64
                 context: web
-                file: web/Dockerfile
+                file: birdImage/Dockerfile
                 push: true
                 tags: | 
                     ${{ env.BIRD_API_IMAGE_NAME }}:${{ github.sha }}
