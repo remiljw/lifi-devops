@@ -5,12 +5,16 @@ on:
         branches:
             - 'main'
         paths:
-          ['bird/**, birdImage/**']
+          - 'bird/**'
+          - 'birdImage/**'
     pull_request:
         types:
             - opened
             - reopened
             - synchronize
+        paths:
+          - 'bird/**'
+          - 'birdImage/**'
 
 
 env:
