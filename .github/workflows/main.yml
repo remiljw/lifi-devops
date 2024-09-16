@@ -1,9 +1,9 @@
 name: HTTP Service
 
-on: 
+on:
     push:
         branches:
-            - 'main'
+            - '*'
         paths:
           - 'bird/**'
           - 'birdImage/**'
