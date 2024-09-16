@@ -5,10 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"math/rand/v2"
 	"net/http"
 	"net/url"
 )
+
+var bird_image_url, bird_image_port string
+bird_image_url = os.Getenv("BIRD_IMAGE_URL")
+bird_image_port = os.Getenv("BIRD_IMAGE_PORT")
 
 type Bird struct {
 	Name        string
@@ -25,7 +30,7 @@ func defaultBird(err error) Bird {
 }
 
 func getBirdImage(birdName string) (string, error) {
-    res, err := http.Get(fmt.Sprintf("http://localhost:4200?birdName=%s", url.QueryEscape(birdName)))
+    res, err := http.Get(fmt.Sprintf("http://%s:%s?birdName=%s", bird_image_url, bird_image_port, url.QueryEscape(birdName)))
     if err != nil {
         return "", err
     }
