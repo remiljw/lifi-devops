@@ -1,5 +1,5 @@
 # Start from the official Go image
-FROM golang:1.22-alpine
+FROM golang:1.22-alpine AS BUILDER
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -15,6 +15,11 @@ COPY . .
 
 # Build the application
 RUN go build -o getBirdImage .
+
+# Use minimal Alpine image for the final deployment
+FROM alpine
+WORKDIR /app
+COPY --from=BUILDER /app/ ./
 
 # Expose the port the app runs on
 EXPOSE 4200
