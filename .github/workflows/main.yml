@@ -1,0 +1,71 @@
+name: HTTP Service
+
+on: 
+    push:
+        branches:
+            - 'main'
+        paths:
+          ['bird/**, birdImage/**']
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+
+
+env:
+  BIRD_IMAGE_NAME: 'getBird'
+  BIRD_API_IMAGE_NAME: 'getBirdImage'
+
+jobs:
+    build-image:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - uses: dorny/paths-filter@v3
+              id: changes
+              with:
+                filters: |
+                    bird:
+                        - 'bird/**'
+                    birdImage:
+                        - 'birdImage/**'
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Log in to the Container registry
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKER_USERNAME }}
+                password: ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Build and push Docker Bird image
+              if:  steps.changes.outputs.bird == 'true'
+              uses: docker/build-push-action@v6
+              with:
+                platforms: linux/amd64,linux/arm64
+                context: web
+                file: web/Dockerfile
+                push: true
+                tags: | 
+                    ${{ env.BIRD_IMAGE_NAME }}:${{ github.sha }}
+                    ${{ env.BIRD_IMAGE_NAME }}:latest
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
+
+            - name: Build and push Docker Bird image
+              if:  steps.changes.outputs.birdImage == 'true'
+              uses: docker/build-push-action@v6
+              with:
+                platforms: linux/amd64,linux/arm64
+                context: web
+                file: web/Dockerfile
+                push: true
+                tags: | 
+                    ${{ env.BIRD_API_IMAGE_NAME }}:${{ github.sha }}
+                    ${{ env.BIRD_API_IMAGE_NAME }}:latest
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
