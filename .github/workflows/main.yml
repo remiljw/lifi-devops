@@ -86,7 +86,7 @@ jobs:
                 cache-to: type=gha,mode=max
 
     update-chart:
-      needs: changes
+      needs: [changes, build-image]
       runs-on: ubuntu-latest
       steps:
           - name: Checkout repository
