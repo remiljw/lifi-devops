@@ -12,13 +12,17 @@ import (
 )
 
 var bird_image_url, bird_image_port string
-bird_image_url = os.Getenv("BIRD_IMAGE_URL")
-bird_image_port = os.Getenv("BIRD_IMAGE_PORT")
+
 
 type Bird struct {
 	Name        string
 	Description string
 	Image       string
+}
+
+func init(){
+	bird_image_url = os.Getenv("BIRD_IMAGE_URL")
+	bird_image_port = os.Getenv("BIRD_IMAGE_PORT")
 }
 
 func defaultBird(err error) Bird {
