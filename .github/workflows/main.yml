@@ -20,22 +20,31 @@ on:
 env:
   BIRD_IMAGE_NAME: 'remiljw/getbird'
   BIRD_API_IMAGE_NAME: 'remiljw/getbirdimage'
+  BIRD_HELM_ROOT: 'helm/lifi-bird-stack/charts/get-bird'
+  BIRD_IMAGE_HELM_ROOT: 'helm/lifi-bird-stack/charts/get-bird-image'
 
 jobs:
-    build-image:
+    changes:
         runs-on: ubuntu-latest
+        outputs:
+            bird: ${{ steps.changes.outputs.bird }}
+            bird-image: ${{ steps.changes.outputs.bird-image }}
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
+            - uses: actions/checkout@v4
             - uses: dorny/paths-filter@v3
               id: changes
               with:
                 filters: |
                     bird:
                         - 'bird/**'
-                    birdImage:
+                    bird-image:
                         - 'birdImage/**'
+    build-image:
+        needs: changes
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
@@ -47,7 +56,7 @@ jobs:
                 password: ${{ secrets.DOCKER_PASSWORD }}
 
             - name: Build and push Docker Bird image
-              if:  steps.changes.outputs.bird == 'true'
+              if:  ${{ needs.changes.outputs.bird == 'true' }}
               id: bird
               uses: docker/build-push-action@v6
               with:
@@ -62,7 +71,7 @@ jobs:
                 cache-to: type=gha,mode=max
 
             - name: Build and push Docker Bird API image
-              if:  steps.changes.outputs.birdImage == 'true'
+              if:  ${{ needs.changes.outputs.bird-image == 'true' }}
               id: bird-api
               uses: docker/build-push-action@v6
               with:
@@ -75,3 +84,37 @@ jobs:
                     ${{ env.BIRD_API_IMAGE_NAME }}:latest
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
+
+    update-chart:
+      needs: changes
+      runs-on: ubuntu-latest
+      steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Update Image
+            if: ${{ needs.changes.outputs.bird == 'true' }}
+            id: bird
+            run: | 
+              git config --local user.name  ${{ github.actor }}        
+              git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+              cat ./${{ env.BIRD_HELM_ROOT }}/values.yaml | grep 'tag:'
+              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ env.BIRD_HELM_ROOT }}/values.yaml
+              cat ./${{ env.BIRD_HELM_ROOT }}/values.yaml | grep 'tag:'
+              pwd
+              git add ./${{ env.BIRD_HELM_ROOT }}
+              git commit -m 'update image to ${{ github.sha }}'
+              git push origin ${{ github.ref }}
+
+          - name: Update Image
+            if: ${{ needs.changes.outputs.bird-image == 'true' }}
+            run: | 
+              git config --local user.name  ${{ github.actor }}        
+              git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+              cat ./${{ env.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
+              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ env.BIRD_IMAGE_HELM_ROOT }}/get-bird-image/values.yaml
+              cat ./${{ env.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
+              pwd
+              git add ./${{ env.BIRD_IMAGE_HELM_ROOT }}
+              git commit -m 'update image to ${{ github.sha }}'
+              git push origin ${{ github.ref }}
