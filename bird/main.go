@@ -9,6 +9,7 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"net/url"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var bird_image_url, bird_image_port string
@@ -76,5 +77,6 @@ func bird(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", bird)
+	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":4201", nil)
 }
