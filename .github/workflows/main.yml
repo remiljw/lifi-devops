@@ -88,12 +88,13 @@ jobs:
     update-chart:
       needs: [changes, build-image]
       runs-on: ubuntu-latest
+      if: ${{ github.ref == 'refs/heads/main'}}
       steps:
           - name: Checkout repository
             uses: actions/checkout@v4
 
           - name: Update Image
-            if: ${{ needs.changes.outputs.bird == 'true' }}
+            if: ${{ needs.changes.outputs.bird == 'true' }} 
             id: bird
             run: | 
               git config --local user.name  ${{ github.actor }}        
