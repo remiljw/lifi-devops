@@ -40,9 +40,9 @@ spec:
               protocol: TCP
           env:
             - name: BIRD_IMAGE_URL
-              value: lifi-bird-stack-get-bird-image.lifi-bird-stack.svc.cluster.local
+              value:  "{{- .Release.Name }}-get-bird-image.lifi-bird-stack.svc.cluster.local"
             - name: BIRD_IMAGE_PORT
-              value: '80'
+              value: '4200'
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
