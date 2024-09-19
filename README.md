@@ -6,32 +6,27 @@ The app is written in Golang and contains 2 APIs:
 - the bird API
 - the birdImage API
 
-When you run the application (figure it out), you will see the relationship between those 2 APIs.
+![pipeline_diagram](https://github.com/remiljw/lifi-devops/blob/main/ci_cd_pipeline.png?raw=true)
 
-# installation & how to run it
+![architecture_diagram](https://github.com/remiljw/lifi-devops/blob/master/bird_application_with_monitoring.png?raw=true)
 
-Find it
+![infrastructure_diagram]
 
-# Challenge
+This repo demonstrates a process of deploying an HTTP service to a K8s cluster using Helm running on an EC2 instance. To get this setup running, you need to have this in place:
 
-How to:
-- fork the repository
-- work on the challenges
-- share your repository link with the recruitment team
+# Prerequisites
+- AWS Account
+- Terraform
 
-Here are the challenges:
-- Install and run the app
-- Dockerize it (create dockerfile for each API)
-- Create an infra on AWS (VPC, SG, instances) using IaC
-- Install a small version of kubernetes on the instances (no EKS)
-- Build the manifests to run the 2 APIs on k8s 
-- Bonus points: observability, helm, scaling
+# Setup
+- Configure your AWS Account credentials on your CLI
 
-Rules:
-- Use security / container / k8s / cloud best practices
-- Change in the source code is possible
+- `cd` into the the terraform directory and apply the IaC.
 
-Evaluation criterias:
-- best practices
-- code organization
-- clarity & readability
+- The output contains a Load Balancer DNS Name. Access it in your browser
+
+Listed below are the available endpoints
+    - Application: `/`
+    - Metrics  : `/metrics`
+    - ArgoCD : `/argo`
+    - Prometheus - `/prometheus`
