@@ -60,8 +60,8 @@ jobs:
                 file: bird/Dockerfile
                 push: true
                 tags: | 
-                    ${{ env.BIRD_IMAGE_NAME }}:${{ github.sha }}
-                    ${{ env.BIRD_IMAGE_NAME }}:latest
+                    ${{ vars.BIRD_IMAGE_NAME }}:${{ github.sha }}
+                    ${{ vars.BIRD_IMAGE_NAME }}:latest
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
 
@@ -75,8 +75,8 @@ jobs:
                 file: birdImage/Dockerfile
                 push: true
                 tags: | 
-                    ${{ env.BIRD_API_IMAGE_NAME }}:${{ github.sha }}
-                    ${{ env.BIRD_API_IMAGE_NAME }}:latest
+                    ${{ vars.BIRD_API_IMAGE_NAME }}:${{ github.sha }}
+                    ${{ vars.BIRD_API_IMAGE_NAME }}:latest
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
 
@@ -94,11 +94,11 @@ jobs:
             run: | 
               git config --local user.name  ${{ github.actor }}        
               git config --local user.email "${{ github.actor }}@users.noreply.github.com"
-              cat ./${{ env.BIRD_HELM_ROOT }}/values.yaml | grep 'tag:'
-              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ env.BIRD_HELM_ROOT }}/values.yaml
-              cat ./${{ env.BIRD_HELM_ROOT }}/values.yaml | grep 'tag:'
+              cat ./${{ vars.BIRD_HELM_ROOT }}/values.yaml | grep 'tag:'
+              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ vars.BIRD_HELM_ROOT }}/values.yaml
+              cat ./${{ vars.BIRD_HELM_ROOT }}/values.yaml | grep 'tag:'
               pwd
-              git add ./${{ env.BIRD_HELM_ROOT }}
+              git add ./${{ vars.BIRD_HELM_ROOT }}
               git commit -m 'update image to ${{ github.sha }}'
               git pull origin ${{ github.ref }}
               git push origin ${{ github.ref }}
@@ -108,11 +108,11 @@ jobs:
             run: | 
               git config --local user.name  ${{ github.actor }}        
               git config --local user.email "${{ github.actor }}@users.noreply.github.com"
-              cat ./${{ env.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
-              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ env.BIRD_IMAGE_HELM_ROOT }}/get-bird-image/values.yaml
-              cat ./${{ env.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
+              cat ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
+              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/get-bird-image/values.yaml
+              cat ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
               pwd
-              git add ./${{ env.BIRD_IMAGE_HELM_ROOT }}
+              git add ./${{ vars.BIRD_IMAGE_HELM_ROOT }}
               git commit -m 'update image to ${{ github.sha }}'
               git pull origin ${{ github.ref }}
               git push origin ${{ github.ref }}
