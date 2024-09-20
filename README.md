@@ -12,7 +12,7 @@ The app is written in Golang and contains 2 APIs:
 
 ![infrastructure_diagram]
 
-This repo demonstrates a process of deploying an HTTP service to a K8s cluster using Helm running on an EC2 instance. To get this setup running, you need to have this in place:
+This repo demonstrates a process of deploying an HTTP service to a K8s cluster  running on an EC2 instance. To get this setup running, you need to have this in place:
 
 # Prerequisites
 - AWS Account
@@ -26,7 +26,7 @@ This repo demonstrates a process of deploying an HTTP service to a K8s cluster u
 - The output contains a Load Balancer DNS Name.Wait for a while before accessing it in your browser
 
 Listed below are the available endpoints
-    - Application: `/`
-    - Metrics  : `/metrics`
-    - ArgoCD : `/argo`
-    - Prometheus - `/prometheus`
+- - Application: `/`
+- - Metrics  : `/metrics`
+- - ArgoCD : `/argo`
+- - Prometheus - `/prometheus`
