@@ -1,3 +1,16 @@
+locals {
+  lb_config = {
+    http = {
+      port     = 80
+      protocol = "TCP"
+    }
+    https = {
+      port     = 443
+      protocol = "TCP"
+    }
+  }
+}
+
 # VPC creation
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -17,18 +30,17 @@ resource "aws_security_group" "ec2_sg" {
   name   = "${var.application}-ec2-sg"
   vpc_id = module.vpc.vpc_id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow SSH access
-  }
+  dynamic "ingress" {
+    for_each = var.ec2_security_group_ingresses
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    security_groups = [aws_security_group.nlb_sg.id] # Allow HTTP traffic from Load Balancer only
+    content {
+      from_port       = ingress.value.from_port
+      to_port         = ingress.value.to_port
+      protocol        = ingress.value.protocol
+      cidr_blocks     = lookup(ingress.value, "cidr_blocks", null)
+      security_groups = lookup(ingress.value, "security_groups", [aws_security_group.nlb_sg.id])
+      description     = ingress.value.description
+    }
   }
 
   egress {
@@ -45,21 +57,17 @@ resource "aws_security_group" "nlb_sg" {
   vpc_id = module.vpc.vpc_id
 
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow HTTP traffic
-  }
+  dynamic "ingress" {
+    for_each = var.lb_security_group_ingresses
 
-  ingress {
-    description = "HTTPS ingress"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow HTTPS traffic
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = lookup(ingress.value, "cidr_blocks", null)
+      description = ingress.value.description
+    }
   }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -82,11 +90,14 @@ resource "aws_lb" "nlb" {
 }
 
 # Load Balancer Target Group
-resource "aws_lb_target_group" "lb_tg" {
-  name     = "${var.application}-tg"
-  port     = 80
-  protocol = "TCP"
+resource "aws_lb_target_group" "tg" {
+  for_each = local.lb_config
+
+  name     = "${var.application}-${each.key}-tg"
+  port     = each.value.port
+  protocol = each.value.protocol
   vpc_id   = module.vpc.vpc_id
+
   health_check {
     path    = "/"
     matcher = "200-499"
@@ -95,20 +106,25 @@ resource "aws_lb_target_group" "lb_tg" {
 }
 
 # Load Balancer Listener
-resource "aws_lb_listener" "http" {
+resource "aws_lb_listener" "listener" {
+  for_each = local.lb_config
+
   load_balancer_arn = aws_lb.nlb.arn
-  port              = 80
-  protocol          = "TCP"
+  port              = each.value.port
+  protocol          = each.value.protocol
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.lb_tg.arn
+    target_group_arn = aws_lb_target_group.tg[each.key].arn
   }
 }
 
+#Auto scaling group attachment 
 resource "aws_autoscaling_attachment" "asg_attachment" {
+  for_each = aws_lb_target_group.tg
+
   autoscaling_group_name = aws_autoscaling_group.asg.id
-  lb_target_group_arn    = aws_lb_target_group.lb_tg.arn
+  lb_target_group_arn    = each.value.arn
 }
 
 # Launch Template for Auto Scaling Group
@@ -123,7 +139,6 @@ resource "aws_launch_template" "asg_lt" {
   }
 
   user_data = filebase64("${path.module}/setup.sh")
-  key_name  = var.application
   monitoring {
     enabled = true
   }
@@ -148,7 +163,7 @@ resource "aws_autoscaling_group" "asg" {
   max_size            = 3
   min_size            = 1
   vpc_zone_identifier = module.vpc.public_subnets
-  target_group_arns   = [aws_lb_target_group.lb_tg.arn]
+  target_group_arns   = values(aws_lb_target_group.tg)[*].arn
   health_check_type   = "EC2"
 
   launch_template {

@@ -32,5 +32,31 @@ variable "ami_id" {
 variable "instance_type" {
   type        = string
   description = "EC2 instance type"
-  default     = "t3.medium"
+}
+
+variable "owner" {
+  type        = string
+  description = "Owner of the resources"
+}
+
+variable "ec2_security_group_ingresses" {
+  type = list(object({
+    description = string
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = optional(list(string), [])
+  }))
+  description = "List of ingresses to be applied on EC2 security group"
+}
+
+variable "lb_security_group_ingresses" {
+  type = list(object({
+    description = string
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = list(string)
+  }))
+  description = "List of ingresses to be applied on Locd balancer security group"
 }

@@ -8,19 +8,20 @@ terraform {
 
   required_version = "~> 1.9.0"
 
-  backend "s3" {
-    bucket         = "lifi-terraform-state"
-    key            = "dev/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "lifi-terraform-lock"
-    encrypt        = true
-  }
+  # set your own backend here if you wish
+  #   backend "s3" {
+  #     bucket         = ""
+  #     key            = ""
+  #     region         = ""
+  #     dynamodb_table = ""
+  #     encrypt        = true
+  #   }
 }
 
 provider "aws" {
   default_tags {
     tags = {
-      owner       = "Michael Ajanaku"
+      owner       = var.owner
       application = var.application
     }
   }
