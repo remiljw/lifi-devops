@@ -53,6 +53,10 @@ wait 10
 kubectl patch secret -n argocd argocd-secret \
   -p '{"stringData": { "admin.password": "'$(htpasswd -bnBC 10 "" newpassword | tr -d ':\n')'"}}'
 
+#Update ArgoCD configmap
+kubectl patch configmap argocd-cmd-params-cm -n argocd --type merge -p '{"data":{"server.insecure": "true", "server.basehref": "/argocd", "server.rootpath": "/argocd"}}'
+kubectl rollout restart deployment argocd-server -n argocd
+wait 5
 
 #Setup Prometheus for monitoring application
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -65,12 +69,14 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=prometheus 
 
 #Download Repository and install it
 git clone https://github.com/remiljw/lifi-devops.git
+kubectl create namespace $NAMESPACE
 kubectl apply -f  ./lifi-devops/manifests/argocd.yml
+wait 10
 
 #Wait for the pods to be ready
 echo "Waiting for application pods to be ready..."
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=$RELEASE_NAME -n $NAMESPACE --timeout=300s
 
-
+wait 10
 kubectl apply -f  ./lifi-devops/manifests/ingress.yml
 
