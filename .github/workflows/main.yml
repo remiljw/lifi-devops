@@ -109,7 +109,7 @@ jobs:
               git config --local user.name  ${{ github.actor }}        
               git config --local user.email "${{ github.actor }}@users.noreply.github.com"
               cat ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
-              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/get-bird-image/values.yaml
+              sed -i "s+tag:.*+tag: '"${{ github.sha }}"'+g" ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/values.yaml
               cat ./${{ vars.BIRD_IMAGE_HELM_ROOT }}/values.yaml | grep 'tag:'
               pwd
               git add ./${{ vars.BIRD_IMAGE_HELM_ROOT }}
