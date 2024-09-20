@@ -1,0 +1,72 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: argocd-service
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: argocd-server.argocd.svc.cluster.local
+  
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: lifi-service
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: lifi-get-bird.lifi-bird-stack.svc.cluster.local
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus-service
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k3s-app-ingress
+  namespace: kube-system
+  annotations:
+    ingress.kubernetes.io/protocol: http
+    # ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    # - host: 
+    -  http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lifi-service
+                port:
+                  name: http
+    - http:
+        paths:
+          - path: /argocd
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-service
+                port:
+                  name: https
+    - http:
+        paths:
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-service
+                port:
+                  name: http-web
