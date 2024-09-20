@@ -8,7 +8,7 @@ The app is written in Golang and contains 2 APIs:
 
 ![pipeline_diagram](https://github.com/remiljw/lifi-devops/blob/main/ci_cd_pipeline.png?raw=true)
 
-![architecture_diagram](https://github.com/remiljw/lifi-devops/blob/main/bird_application_with_monitoring.png?raw=true)
+![architecture_diagram](https://github.com/remiljw/lifi-devops/blob/main/bird_application_with_monitoring.jpeg?raw=true)
 
 ![infrastructure_diagram]
 
