@@ -26,7 +26,6 @@ This repo demonstrates a process of deploying an HTTP service to a K8s cluster  
 - The output contains a Load Balancer DNS Name.Wait for a while before accessing it in your browser
 
 Listed below are the available endpoints
-- - Application: `/`
-- - Metrics  : `/metrics`
-- - ArgoCD : `/argo`
-- - Prometheus - `/prometheus`
+- - API: `/bird`
+- - ArgoCD : `/argocd` username: admin. password: newpassword
+- - Prometheus - `/`
