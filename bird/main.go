@@ -5,15 +5,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"math/rand/v2"
 	"net/http"
 	"net/url"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+var bird_image_url, bird_image_port string
+
 
 type Bird struct {
 	Name        string
 	Description string
 	Image       string
+}
+
+func init(){
+	bird_image_url = os.Getenv("BIRD_IMAGE_URL")
+	bird_image_port = os.Getenv("BIRD_IMAGE_PORT")
 }
 
 func defaultBird(err error) Bird {
@@ -25,7 +35,7 @@ func defaultBird(err error) Bird {
 }
 
 func getBirdImage(birdName string) (string, error) {
-    res, err := http.Get(fmt.Sprintf("http://localhost:4200?birdName=%s", url.QueryEscape(birdName)))
+    res, err := http.Get(fmt.Sprintf("http://%s:%s?birdName=%s", bird_image_url, bird_image_port, url.QueryEscape(birdName)))
     if err != nil {
         return "", err
     }
@@ -67,5 +77,6 @@ func bird(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", bird)
+	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":4201", nil)
 }

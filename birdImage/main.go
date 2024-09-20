@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Urls struct {
@@ -66,6 +67,7 @@ func bird(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", bird)
+	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":4200", nil)
 }
 

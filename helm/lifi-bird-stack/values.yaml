@@ -1,0 +1,11 @@
+global:
+  namespace:
+    create: true
+    name: "lifi-bird-stack"
+
+get-bird:
+  enabled: true
+
+get-bird-image:
+  enabled: true
+

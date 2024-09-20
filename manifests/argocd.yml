@@ -1,0 +1,60 @@
+# Add git repo to Argo CD
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lifi-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://github.com/remiljw/lifi-devops
+  name: lifi
+  username: ""
+  insecure: "true" 
+  forceHttpBasicAuth: "true" 
+  enableLfs: "true" 
+
+# Deploy HTTP service 
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lifi
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/remiljw/lifi-devops.git
+    targetRevision: dev
+    path: helm/lifi-bird-stack
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lifi-bird-stack
+  syncPolicy:
+    automated: 
+      selfHeal: true 
+    syncOptions:    
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true 
+
+#Create service monitor
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: get-bird-api-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+      - lifi-bird-stack
+  endpoints:
+  - interval: 20s
+    port: http
+    path: /metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: lifi

@@ -1,0 +1,5 @@
+1.Creating the necessary lifi-bird-stack resources:
+{{- if .Values.global.namespace.create }}
+  echo "Creating namespace {{ .Values.global.namespace.name }}"
+{{- end }}
+
