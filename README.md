@@ -1,4 +1,4 @@
-# Bird Application
+# Bird Application [![HTTP Service](https://github.com/remiljw/lifi-devops/actions/workflows/main.yml/badge.svg)](https://github.com/remiljw/lifi-devops/actions/workflows/main.yml)
 
 This is the bird Application! It gives us birds!!!
 
