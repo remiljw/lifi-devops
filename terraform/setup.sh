@@ -64,7 +64,7 @@ echo "Waiting for prometheus pods to be ready..."
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/instance=prometheus -n monitoring --timeout=300s
 
 #Download Repository and install it
-git clone https://github.com/remiljw/lifi-devops.git --branch  "dev" --single-branch
+git clone https://github.com/remiljw/lifi-devops.git
 kubectl apply -f  ./lifi-devops/manifests/argocd.yml
 
 #Wait for the pods to be ready
