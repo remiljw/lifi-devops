@@ -26,10 +26,8 @@ metadata:
   name: k3s-app-ingress
   namespace: argocd
   annotations:
-    ingress.kubernetes.io/protocol: http
-    ingress.kubernetes.io/rewrite-target: /
-    ingress.kubernetes.io/force-ssl-redirect: "true"
-    ingress.kubernetes.io/ssl-passthrough: "true"
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   ingressClassName: traefik
   rules:
@@ -41,7 +39,7 @@ spec:
               service:
                 name: argocd-server
                 port:
-                  name: https
+                  name: http
 
 ---
 apiVersion: networking.k8s.io/v1
