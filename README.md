@@ -10,7 +10,7 @@ The app is written in Golang and contains 2 APIs:
 
 ![architecture_diagram](https://github.com/remiljw/lifi-devops/blob/main/bird_application_with_monitoring.jpeg?raw=true)
 
-![infrastructure_diagram]
+![service_routing_diagram](https://github.com/remiljw/lifi-devops/blob/main/services_routing.png?raw=true)
 
 This repo demonstrates a process of deploying an HTTP service to a K8s cluster  running on an EC2 instance. To get this setup running, you need to have this in place:
 
