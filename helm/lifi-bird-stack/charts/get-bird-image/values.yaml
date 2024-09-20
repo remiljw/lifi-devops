@@ -9,7 +9,7 @@ image:
   pullPolicy: Always
   port: 4200
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: '5a0bef64d363b95d93706ef316ccf274da9443f2'
 
 imagePullSecrets: []
 nameOverride: ""
