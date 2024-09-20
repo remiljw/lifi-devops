@@ -23,7 +23,7 @@ This repo demonstrates a process of deploying an HTTP service to a K8s cluster u
 
 - `cd` into the the terraform directory and apply the IaC.
 
-- The output contains a Load Balancer DNS Name. Access it in your browser
+- The output contains a Load Balancer DNS Name.Wait for a while before accessing it in your browser
 
 Listed below are the available endpoints
     - Application: `/`
