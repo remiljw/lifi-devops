@@ -25,13 +25,6 @@ resource "aws_security_group" "ec2_sg" {
   }
 
   ingress {
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Kubernetes API server port
-  }
-
-  ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -47,8 +40,8 @@ resource "aws_security_group" "ec2_sg" {
 }
 
 # Load Balancer Security Group
-resource "aws_security_group" "alb_sg" {
-  name   = "${var.application}-alb-sg"
+resource "aws_security_group" "nlb_sg" {
+  name   = "${var.application}-nlb-sg"
   vpc_id = module.vpc.vpc_id
 
 
@@ -59,20 +52,32 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Allow HTTP traffic
   }
 
+  ingress {
+    description = "HTTPS ingress"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Load Balancer
-resource "aws_lb" "alb" {
-  name               = "${var.application}-alb"
+resource "aws_lb" "nlb" {
+  name               = "${var.application}-nlb"
   internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
+  load_balancer_type = "network"
+  security_groups    = [aws_security_group.nlb_sg.id]
   subnets            = module.vpc.public_subnets
 }
 
@@ -80,18 +85,20 @@ resource "aws_lb" "alb" {
 resource "aws_lb_target_group" "lb_tg" {
   name     = "${var.application}-tg"
   port     = 80
-  protocol = "HTTP"
+  protocol = "TCP"
   vpc_id   = module.vpc.vpc_id
   health_check {
-    path = "/"
+    path    = "/"
+    matcher = "200-499"
+    timeout = 15
   }
 }
 
 # Load Balancer Listener
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.alb.arn
+  load_balancer_arn = aws_lb.nlb.arn
   port              = 80
-  protocol          = "HTTP"
+  protocol          = "TCP"
 
   default_action {
     type             = "forward"
@@ -120,6 +127,7 @@ resource "aws_launch_template" "asg_lt" {
   monitoring {
     enabled = true
   }
+
 
   tag_specifications {
     resource_type = "instance"
