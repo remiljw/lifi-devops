@@ -28,7 +28,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow HTTP traffic
+    security_groups = [aws_security_group.nlb_sg.id] # Allow HTTP traffic from Load Balancer only
   }
 
   egress {
@@ -57,7 +57,7 @@ resource "aws_security_group" "nlb_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Allow HTTPS traffic
   }
 
   egress {

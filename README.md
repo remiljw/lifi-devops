@@ -27,5 +27,6 @@ This repo demonstrates a process of deploying an HTTP service to a K8s cluster  
 
 Listed below are the available endpoints
 - - API: `/bird`
-- - ArgoCD : `/argocd` username: admin. password: newpassword
+- - ArgoCD : `/argocd` username: `admin` password: `newpassword`
 - - Prometheus - `/`
+- - Metrics - `/metrics`
