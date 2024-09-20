@@ -25,6 +25,11 @@ jobs:
             bird: ${{ steps.changes.outputs.bird }}
             bird-image: ${{ steps.changes.outputs.bird-image }}
         steps:
+            - name: Dump GitHub context
+              env:
+                GITHUB_CONTEXT: ${{ toJson(github) }}
+              run: echo "$GITHUB_CONTEXT"
+
             - uses: actions/checkout@v4
             - uses: dorny/paths-filter@v3
               id: changes
